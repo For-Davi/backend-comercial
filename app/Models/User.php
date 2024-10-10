@@ -44,6 +44,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Client::class);
     }
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
     public static function getUsersByEnterpriseId($enterpriseId)
     {
         return self::where('enterprise_id', $enterpriseId)->get();

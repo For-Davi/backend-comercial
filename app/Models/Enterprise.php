@@ -23,4 +23,12 @@ class Enterprise extends Model
     {
         return $this->hasMany(User::class, 'enterprise_id');
     }
+    public function cars()
+    {
+        return $this->hasMany(Car::class, 'enterprise_id');
+    }
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
 }

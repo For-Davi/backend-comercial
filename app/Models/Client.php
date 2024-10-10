@@ -29,6 +29,10 @@ class Client extends Model
     {
         return $this->belongsToMany(User::class);
     }
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
     public static function getClientsByEnterpriseId($enterprise_id)
     {
         return self::whereHas('employees', function ($query) use ($enterprise_id) {
