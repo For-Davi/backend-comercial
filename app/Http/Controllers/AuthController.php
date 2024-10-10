@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
+use App\Models\Enterprise;
 
 class AuthController extends Controller
 {
-    public function __construct(
-        protected User $user
-    ) {}
+    protected $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
 
     public function login(Request $request)
     {
@@ -44,17 +48,25 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'enterprise_id' => 'required|string'
         ]);
 
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
+        $enterprise = Enterprise::find($request->input('enterprise_id'));
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if (!$enterprise) {
+            return response()->json(['error' => 'Enterprise not found'], 404);
+        }
 
-        return response()->json(['token' => $token]);
+        User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'enterprise_id' => $enterprise->id,
+        ]);
+
+        $users = User::getUsersByEnterpriseId($enterprise->id);
+
+        return response()->json(['users' => $users, 'message' => 'Funcionário cadastrado com sucesso']);
     }
 
     public function forgotPassword(Request $request)

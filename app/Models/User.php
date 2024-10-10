@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'enterprise_id',
     ];
 
     protected $hidden = [
@@ -33,5 +34,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function enterprise()
+    {
+        return $this->belongsTo(Enterprise::class, 'enterprise_id');
+    }
+    public static function getUsersByEnterpriseId($enterpriseId)
+    {
+        return self::where('enterprise_id', $enterpriseId)->get();
     }
 }
