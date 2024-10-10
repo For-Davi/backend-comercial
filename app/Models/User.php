@@ -40,8 +40,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Enterprise::class, 'enterprise_id');
     }
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class);
+    }
     public static function getUsersByEnterpriseId($enterpriseId)
     {
         return self::where('enterprise_id', $enterpriseId)->get();
+    }
+    public static function getUsersIDByEnterpriseId($enterpriseId)
+    {
+        return self::where('enterprise_id', $enterpriseId)->pluck('id');
     }
 }
